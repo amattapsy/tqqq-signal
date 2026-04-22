@@ -202,7 +202,7 @@ def chart_cash_ratio(nav: pd.Series, signals: pd.DataFrame) -> go.Figure:
     hedge_val = sig["hedge_value"].fillna(0.0) if "hedge_value" in sig.columns else pd.Series(0.0, index=nav.index)
     cash_val  = sig["cash_value"].fillna(0.0)  if "cash_value"  in sig.columns else pd.Series(0.0, index=nav.index)
 
-    nav_aligned = nav.reindex(sig.index).fillna(method="ffill").fillna(1.0)
+    nav_aligned = nav.reindex(sig.index).ffill().fillna(1.0)
     hedge_ratio = (hedge_val / nav_aligned * 100).clip(0, 100)
     cash_ratio  = (cash_val  / nav_aligned * 100).clip(0, 100)
 
