@@ -330,9 +330,293 @@ tr:nth-child(even) td { background: #f3f6ff; }
 
 
 # ── 페이지 설정 ──────────────────────────────────────────────
-st.set_page_config(page_title="TQQQ 투자 시그널", page_icon="📱", layout="wide")
-st.title("📱 TQQQ 투자 시그널")
-st.caption("QQQ 신호 기반 TQQQ 매매 전략 | 데이터: Yahoo Finance")
+st.set_page_config(page_title="TQQQ 투자 시그널", page_icon="📈", layout="wide")
+
+# ── iOS 디자인 시스템 CSS ────────────────────────────────────
+st.markdown("""
+<style>
+/* ══════════════════════════════════════════════════════════
+   라이트 모드 강제 (다크모드 오버라이드 방지)
+══════════════════════════════════════════════════════════ */
+:root { color-scheme: light only !important; }
+html, body { color-scheme: light only !important; }
+
+/* ══════════════════════════════════════════════════════════
+   iOS 시스템 기반 디자인 토큰
+══════════════════════════════════════════════════════════ */
+html, body, [class*="css"] {
+  font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic',
+               BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  color: #1c1c1e !important;
+}
+/* iOS 시스템 배경색 */
+[data-testid="stAppViewContainer"] > .main {
+  background: #f2f2f7 !important;
+}
+[data-testid="stMain"] > div { padding-top: 0.5rem; }
+section[data-testid="stSidebar"] {
+  background: #ffffff !important;
+  color: #1c1c1e !important;
+}
+/* 스크롤바 숨김 */
+[data-testid="stAppViewBlockContainer"] { max-width: 1280px; }
+/* 다크모드 카드 오버라이드 전용 */
+.ios-card, .hero-card, .kpi-tile, .action-row,
+.ppill, .dday-ios, .rally-card, .split-card {
+  color-scheme: light !important;
+}
+
+/* ── 네비게이션 바 ── */
+.ios-navbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 0 12px 0; margin-bottom: 4px;
+}
+.ios-navbar .nav-title {
+  font-size: 1.55rem; font-weight: 700; color: #1c1c1e; letter-spacing: -0.5px;
+}
+.ios-navbar .nav-sub {
+  font-size: 0.78rem; color: #8e8e93; margin-top: 1px;
+}
+.ios-navbar .nav-date {
+  font-size: 0.82rem; font-weight: 500; color: #8e8e93;
+  background: white; border-radius: 10px; padding: 6px 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════
+   카드 컴포넌트
+══════════════════════════════════════════════════════════ */
+.ios-card {
+  background: #ffffff !important; border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.04);
+  margin-bottom: 10px;
+  color: #1c1c1e !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   히어로 신호 카드 (full-width)
+══════════════════════════════════════════════════════════ */
+.hero-card {
+  border-radius: 20px; padding: 20px 24px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px;
+  color: #1c1c1e !important;
+}
+.hero-hold  { background: linear-gradient(135deg,#f0fdf4,#dcfce7) !important; border: 1.5px solid #86efac; }
+.hero-wait  { background: linear-gradient(135deg,#fffbeb,#fef9c3) !important; border: 1.5px solid #fde047; }
+.hero-sell  { background: linear-gradient(135deg,#fff1f2,#ffe4e6) !important; border: 1.5px solid #fca5a5; }
+.hero-buy   { background: linear-gradient(135deg,#eff6ff,#dbeafe) !important; border: 1.5px solid #93c5fd; }
+.hero-rally { background: linear-gradient(135deg,#fdf4ff,#f3e8ff) !important; border: 1.5px solid #d8b4fe; }
+.hero-split { background: linear-gradient(135deg,#eef2ff,#e0e7ff) !important; border: 1.5px solid #a5b4fc; }
+
+.hero-left { flex: 1; }
+.hero-icon { font-size: 2.4rem; line-height: 1; margin-bottom: 6px; }
+.hero-action { font-size: 1.5rem; font-weight: 800; color: #1c1c1e !important; letter-spacing: -0.5px; margin-bottom: 4px; }
+.hero-detail { font-size: 0.88rem; color: #3a3a3c !important; line-height: 1.5; }
+.hero-right { text-align: right; flex-shrink: 0; color: #1c1c1e !important; }
+
+/* ══════════════════════════════════════════════════════════
+   KPI 타일 (3개 / 5개)
+══════════════════════════════════════════════════════════ */
+.kpi-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.kpi-tile {
+  flex: 1; background: #ffffff !important; border-radius: 14px;
+  padding: 12px 14px; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  color: #1c1c1e !important;
+}
+.kpi-label {
+  font-size: 0.68rem; color: #6c6c70 !important; font-weight: 600;
+  letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 4px;
+}
+.kpi-value { font-size: 1.4rem; font-weight: 800; color: #1c1c1e !important; line-height: 1.15; }
+.kpi-delta { font-size: 0.78rem; font-weight: 500; margin-top: 3px; }
+.kpi-pos { color: #1a9e3f !important; } .kpi-neg { color: #d93025 !important; } .kpi-neu { color: #6c6c70 !important; }
+
+/* ══════════════════════════════════════════════════════════
+   섹션 헤더 (iOS grouped label)
+══════════════════════════════════════════════════════════ */
+.sec-label {
+  font-size: 0.7rem; font-weight: 700; color: #4a4a4e !important;
+  letter-spacing: 0.7px; text-transform: uppercase;
+  margin: 18px 0 6px 4px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   행동 지침 카드
+══════════════════════════════════════════════════════════ */
+.action-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #ffffff !important; border-radius: 13px; padding: 13px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10); margin-bottom: 7px;
+  gap: 12px; color: #1c1c1e !important;
+}
+.action-asset { font-size: 1.05rem; font-weight: 700; color: #1c1c1e !important; min-width: 56px; }
+.action-type  { font-size: 0.88rem; font-weight: 600; flex: 1; }
+.act-buy      { color: #0066cc !important; } .act-sell { color: #cc2200 !important; }
+.act-split    { color: #4040bb !important; } .act-hold { color: #1a8a35 !important; }
+.act-rally    { color: #7b1fa2 !important; }
+.action-right { text-align: right; }
+.action-amt   { font-size: 0.95rem; font-weight: 700; color: #1c1c1e !important; }
+.action-sh    { font-size: 0.75rem; color: #555 !important; }
+
+/* ══════════════════════════════════════════════════════════
+   가격 칩 (iOS pill)
+══════════════════════════════════════════════════════════ */
+.price-pills { display: flex; gap: 9px; flex-wrap: wrap; margin: 4px 0 12px 0; }
+.ppill {
+  background: #ffffff !important; border-radius: 12px; padding: 10px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10); text-align: center; flex: 1; min-width: 80px;
+  color: #1c1c1e !important;
+}
+.ppill-lbl { font-size: 0.68rem; color: #555 !important; font-weight: 600;
+             letter-spacing: 0.3px; text-transform: uppercase; }
+.ppill-val { font-size: 1.05rem; font-weight: 700; color: #1c1c1e !important; margin: 2px 0; }
+.ppill-sub { font-size: 0.72rem; font-weight: 600; }
+.ppill-up  { color: #1a8a35 !important; } .ppill-dn { color: #cc2200 !important; } .ppill-nu { color: #555 !important; }
+
+/* ══════════════════════════════════════════════════════════
+   D-day / 관망 카드
+══════════════════════════════════════════════════════════ */
+.dday-ios {
+  background: #ffffff !important; border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10);
+  display: flex; align-items: center; gap: 16px; margin-bottom: 10px;
+  color: #1c1c1e !important;
+}
+.dday-big  { font-size: 2.6rem; font-weight: 900; line-height: 1; }
+.dday-org  { color: #e07800 !important; }
+.dday-pur  { color: #7b1fa2 !important; }
+.dday-info { flex: 1; }
+.dday-title { font-size: 0.95rem; font-weight: 700; color: #1c1c1e !important; }
+.dday-sub   { font-size: 0.8rem; color: #444 !important; margin-top: 2px; }
+.dday-prog  {
+  height: 5px; background: #e0e0e0; border-radius: 3px; margin-top: 8px; overflow: hidden;
+}
+.dday-prog-bar { height: 100%; border-radius: 3px; background: #e07800; }
+
+/* ══════════════════════════════════════════════════════════
+   랠리 현황 카드
+══════════════════════════════════════════════════════════ */
+.rally-card {
+  background: #ffffff !important; border-radius: 14px; padding: 13px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10); margin-bottom: 10px;
+  color: #1c1c1e !important;
+}
+.rally-title { font-size: 0.85rem; font-weight: 700; color: #7b1fa2 !important; margin-bottom: 8px; }
+.rally-levels { display: flex; gap: 8px; flex-wrap: wrap; }
+.rlv {
+  flex: 1; min-width: 80px; border-radius: 10px; padding: 8px 10px; text-align: center;
+}
+.rlv-done { background: #f3e5f5 !important; }
+.rlv-next { background: #fffde7 !important; border: 1.5px solid #f9a825; }
+.rlv-far  { background: #f0f0f0 !important; }
+.rlv-n    { font-size: 0.7rem; color: #555 !important; font-weight: 600; }
+.rlv-th   { font-size: 1.0rem; font-weight: 800; color: #1c1c1e !important; }
+.rlv-gap  { font-size: 0.72rem; margin-top: 2px; }
+
+/* ══════════════════════════════════════════════════════════
+   분할매수 트리거 카드
+══════════════════════════════════════════════════════════ */
+.split-card {
+  background: #ffffff !important; border-radius: 14px; padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10); margin-bottom: 10px;
+  color: #1c1c1e !important;
+}
+.split-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.split-title { font-size: 0.88rem; font-weight: 700; color: #1c1c1e !important; }
+.split-base  { font-size: 0.78rem; color: #555 !important; }
+.split-row   {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 0; border-bottom: 1px solid #e8e8e8;
+  font-size: 0.85rem; color: #1c1c1e !important;
+}
+.split-row:last-child { border-bottom: none; }
+.split-zone  { font-weight: 700; color: #3333aa !important; width: 28px; }
+.split-price { color: #222 !important; flex: 1; }
+.split-gap   { color: #444 !important; text-align: right; width: 64px; }
+.split-pct   { color: #222 !important; text-align: right; width: 36px; }
+.split-st    { text-align: right; width: 60px; font-weight: 600; font-size: 0.8rem; }
+.split-done  { color: #888 !important; text-decoration: line-through; opacity: 0.65; }
+.split-fire  { color: #cc2200 !important; }
+.split-wait  { color: #666 !important; }
+
+/* ══════════════════════════════════════════════════════════
+   분석 도구 구분선
+══════════════════════════════════════════════════════════ */
+.analysis-sep {
+  display: flex; align-items: center; gap: 12px;
+  margin: 28px 0 10px 0;
+}
+.analysis-sep .sep-line { flex: 1; height: 1px; background: #d1d1d6; }
+.analysis-sep .sep-text {
+  font-size: 0.68rem; color: #8e8e93; font-weight: 600;
+  letter-spacing: 0.8px; text-transform: uppercase; white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════
+   메트릭 & 기타 조정
+══════════════════════════════════════════════════════════ */
+[data-testid="stMetricValue"] {
+  font-size: 1.25rem !important; font-weight: 700 !important;
+  color: #1c1c1e !important;
+}
+[data-testid="stMetricDelta"] { font-size: 0.8rem !important; }
+[data-testid="stExpander"] summary {
+  font-size: 0.9rem; font-weight: 600; color: #1c1c1e !important;
+}
+h1 { margin-bottom: 0 !important; }
+
+/* Streamlit 탭 스타일 보강 */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+  background: #e8e8ed !important; border-radius: 12px; padding: 4px;
+  gap: 2px;
+}
+[data-testid="stTabs"] [data-baseweb="tab"] {
+  border-radius: 8px !important; font-size: 0.84rem !important;
+  font-weight: 600 !important; padding: 7px 14px !important;
+  color: #3a3a3c !important;
+}
+[data-testid="stTabs"] [aria-selected="true"] {
+  background: #ffffff !important; color: #1c1c1e !important;
+}
+
+/* 네비게이션 바 강제 라이트 */
+.ios-navbar { color: #1c1c1e !important; }
+.ios-navbar .nav-title { color: #1c1c1e !important; }
+.ios-navbar .nav-sub   { color: #6c6c70 !important; }
+.ios-navbar .nav-date  {
+  background: #ffffff !important; color: #4a4a4e !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* 분석 구분선 */
+.analysis-sep .sep-text { color: #4a4a4e !important; }
+.analysis-sep .sep-line { background: #b0b0b8 !important; }
+
+/* caption / small text */
+[data-testid="stCaptionContainer"] { color: #555 !important; }
+</style>
+""", unsafe_allow_html=True)
+
+# ── iOS 네비게이션 바 ────────────────────────────────────────
+from datetime import date as _date_cls
+_today_str = _date_cls.today().strftime("%Y년 %m월 %d일")
+st.markdown(f"""
+<div class="ios-navbar">
+  <div>
+    <div class="nav-title">📈 TQQQ 시그널</div>
+    <div class="nav-sub">QQQ 신호 기반 · Yahoo Finance · 매일 자동 갱신</div>
+  </div>
+  <div class="nav-date">📅 {_today_str}</div>
+</div>
+""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════
 # 사이드바 — 내 포지션 입력 (투자 시그널용)
@@ -816,202 +1100,456 @@ m_bnh = calc_bnh_metrics(df, float(initial_capital))
 
 bear_periods = find_bear_periods(nav, threshold=-0.35)
 
-# ── 탭 구성 ──────────────────────────────────────────────
-tab_today, tab_main, tab_bear, tab_signals, tab_compare, tab_manual = st.tabs(
-    ["📱 오늘의 신호", "📊 결과", "🔴 하락장 분석", "📋 일별 시그널", "💾 저장·비교", "📖 전략 매뉴얼"]
-)
-
 # ════════════════════════════════════════════════════════
-# TAB 0: 오늘의 신호 (실전 매매용)
+# 오늘의 신호 — 항상 보이는 상단 고정 영역
 # ════════════════════════════════════════════════════════
-with tab_today:
-    # ── 포지션 불러오기 ─────────────────────────────────
-    if "my_position" not in st.session_state:
-        _loaded = load_position()
-        st.session_state["my_position"] = _loaded if _loaded else default_position()
-    pos = st.session_state["my_position"]
 
-    # ── 신호 계산 ─────────────────────────────────────
-    if not pos.get("trade_start_date"):
-        st.info("👈 왼쪽 사이드바의 **👤 내 포지션**에서 거래 시작일과 보유 정보를 입력하고 **저장** 버튼을 눌러주세요.")
-    else:
-        # initial_investment가 0이면 자동 추정
-        #   (TQQQ 주수 × 평균단가) + 현금 + 헷지자산(현재가 기준)
-        #   자동 추정도 불가능하면 $10,000 사용 (신호 판정에는 영향 없음)
-        _init_inv = float(pos.get("initial_investment", 0.0))
-        _auto_inv = False
+# ── 포지션 불러오기 ─────────────────────────────────
+if "my_position" not in st.session_state:
+    _loaded = load_position()
+    st.session_state["my_position"] = _loaded if _loaded else default_position()
+pos = st.session_state["my_position"]
+
+# ── 신호 계산 ─────────────────────────────────────────────
+if not pos.get("trade_start_date"):
+    st.markdown("""
+<div class="ios-card" style="border-left:4px solid #007aff;">
+  👈 왼쪽 사이드바의 <strong>👤 내 포지션</strong>에서 거래 시작일과 보유 정보를 입력하고
+  <strong>저장</strong> 버튼을 눌러주세요.
+</div>
+""", unsafe_allow_html=True)
+else:
+    _init_inv = float(pos.get("initial_investment", 0.0))
+    _auto_inv = False
+    if _init_inv <= 0:
+        _latest = df_full.iloc[-1]
+        _gld_p = float(_latest.get("gld", 0)) if "gld" in df_full.columns else 0.0
+        _tlt_p = float(_latest.get("tlt", 0)) if "tlt" in df_full.columns else 0.0
+        _tqqq_cost = float(pos.get("tqqq_shares", 0)) * float(pos.get("tqqq_avg_cost", 0))
+        _gld_val   = float(pos.get("gld_shares", 0)) * _gld_p
+        _tlt_val   = float(pos.get("tlt_shares", 0)) * _tlt_p
+        _cash      = float(pos.get("cash_usd", 0))
+        _init_inv  = _tqqq_cost + _cash + _gld_val + _tlt_val
         if _init_inv <= 0:
-            _latest = df_full.iloc[-1]
-            _gld_p = float(_latest.get("gld", 0)) if "gld" in df_full.columns else 0.0
-            _tlt_p = float(_latest.get("tlt", 0)) if "tlt" in df_full.columns else 0.0
-            _tqqq_cost = float(pos.get("tqqq_shares", 0)) * float(pos.get("tqqq_avg_cost", 0))
-            _gld_val   = float(pos.get("gld_shares", 0)) * _gld_p
-            _tlt_val   = float(pos.get("tlt_shares", 0)) * _tlt_p
-            _cash      = float(pos.get("cash_usd", 0))
-            _init_inv  = _tqqq_cost + _cash + _gld_val + _tlt_val
-            if _init_inv <= 0:
-                _init_inv = 10000.0
-            _auto_inv = True
+            _init_inv = 10000.0
+        _auto_inv = True
 
-        if _auto_inv:
-            st.caption(f"ℹ️ 거래 시작일 투자금을 자동 추정: **${_init_inv:,.0f}** "
-                       f"(= TQQQ 주수 × 평균단가 + 현금 + 헷지자산). "
-                       f"이 값은 '전략 기대 포지션' 표시에만 쓰이며, **오늘의 신호 판정에는 영향 없습니다.**")
+    with st.spinner("오늘의 신호 계산 중..."):
+        sig = compute_today_signal(
+            df_full=df_full,
+            params=p,
+            trade_start_date=pos["trade_start_date"],
+            initial_investment=_init_inv,
+        )
 
-        with st.spinner("오늘의 신호 계산 중..."):
-            sig = compute_today_signal(
-                df_full=df_full,
-                params=p,
-                trade_start_date=pos["trade_start_date"],
-                initial_investment=_init_inv,
+    if not sig["ok"]:
+        st.error(f"신호 계산 실패: {sig['error']}")
+    else:
+        action_type      = sig["action_type"]
+        waiting_info     = sig.get("waiting_info", {})
+        split_buy_status = sig.get("split_buy_status", {})
+        rally_status     = sig.get("rally_status", {})
+        recs = calc_action_recommendation(sig, pos, p)
+        pr   = sig["prices"]
+
+        # ── 히어로 카드 스타일 ────────────────────────────
+        _hero_cls = {
+            "BUY_ALL": "hero-buy",   "REENTRY": "hero-buy",
+            "SELL_ALL": "hero-sell", "SPLIT_BUY": "hero-split",
+            "RALLY_SELL": "hero-rally", "WAITING": "hero-wait",
+            "HOLD": "hero-hold",
+        }.get(action_type, "hero-hold")
+
+        _hero_icon = {
+            "BUY_ALL": "🟢", "REENTRY": "🟢", "SELL_ALL": "🔴",
+            "SPLIT_BUY": "🔵", "RALLY_SELL": "💰", "WAITING": "⏳", "HOLD": "✅",
+        }.get(action_type, "ℹ️")
+
+        _hero_label = {
+            "BUY_ALL": "전량 매수", "REENTRY": "재진입 (전량매수)",
+            "SELL_ALL": "전량 매도", "SPLIT_BUY": "분할 매수",
+            "RALLY_SELL": "랠리 익절", "WAITING": "관망 중", "HOLD": "보유 유지",
+        }.get(action_type, action_type)
+
+        # ── 자산 계산 (렌더링 전 선계산) ─────────────────
+        _nav_series      = sig.get("nav_series")
+        _df_slice        = sig.get("df_slice")
+        user_today_total = compute_user_current_total(pos, pr)
+        _has_asset_data  = (_nav_series is not None and len(_nav_series) >= 2
+                            and user_today_total > 0)
+
+        if _has_asset_data:
+            _sim_last       = float(_nav_series.iloc[-1])
+            _scale          = user_today_total / _sim_last if _sim_last > 0 else 1.0
+            scaled_nav      = _nav_series * _scale
+            _scaled_initial = float(scaled_nav.iloc[0])
+            _profit         = user_today_total - _scaled_initial
+            _profit_pct     = (_profit / _scaled_initial * 100) if _scaled_initial > 0 else 0.0
+            _nav_max        = float(scaled_nav.cummax().iloc[-1])
+            _mdd            = (user_today_total / _nav_max - 1) * 100 if _nav_max > 0 else 0.0
+            _days           = (scaled_nav.index[-1] - scaled_nav.index[0]).days
+            _years          = _days / 365.25 if _days > 0 else 0.01
+            _cagr           = ((user_today_total / _scaled_initial) ** (1 / _years) - 1) * 100 \
+                              if _scaled_initial > 0 and _years > 0 else 0.0
+        else:
+            _scaled_initial = _profit = _profit_pct = _mdd = _cagr = 0.0
+
+        # ── D-day / 관망 우측 블록 ──────────────────────
+        _right_block = ""
+        if waiting_info.get("is_waiting"):
+            _mode = waiting_info.get("mode", "")
+            _rem  = waiting_info.get("remaining_days", 0)
+            _ela  = waiting_info.get("elapsed_days", 0)
+            _tot  = waiting_info.get("total_days", 0)
+            _soc  = waiting_info.get("sell_off_count", 0)
+            _prog = int(_ela / _tot * 100) if _tot > 0 else 0
+            if _mode in ("short", "long"):
+                _mode_lbl = "단기 관망" if _mode == "short" else "장기 관망"
+                _right_block = f"""
+<div class="hero-right">
+  <div style="font-size:0.7rem;color:#b45309;margin-bottom:2px">{_mode_lbl}</div>
+  <div style="font-size:2.2rem;font-weight:900;color:#ff9500;line-height:1">D-{_rem}</div>
+  <div style="font-size:0.7rem;color:#78716c;margin-top:2px">{_ela}/{_tot}일 · {_soc}차 매도</div>
+  <div style="width:88px;height:4px;background:#fde68a;border-radius:2px;margin-top:6px">
+    <div style="width:{_prog}%;height:100%;background:#f59e0b;border-radius:2px"></div>
+  </div>
+</div>"""
+            elif _mode == "ma200":
+                _streak = sig["signal_row"].get("state_ma5_streak", 0)
+                _needed = p.ma200_reentry_streak
+                _s_pct  = int(_streak / _needed * 100) if _needed > 0 else 100
+                _right_block = f"""
+<div class="hero-right">
+  <div style="font-size:0.7rem;color:#9c27b0;margin-bottom:4px">추세 대기</div>
+  <div style="font-size:1.4rem;font-weight:900;color:#9c27b0;line-height:1.2">MA200<br>관망</div>
+  <div style="font-size:0.7rem;color:#78716c;margin-top:4px">MA5&gt;MA200 {_streak}/{_needed}일</div>
+  <div style="width:88px;height:4px;background:#e9d5ff;border-radius:2px;margin-top:6px">
+    <div style="width:{_s_pct}%;height:100%;background:#9c27b0;border-radius:2px"></div>
+  </div>
+</div>"""
+        elif rally_status.get("ath_qqq", 0) > 0 and action_type not in ("SELL_ALL", "WAITING"):
+            _vs  = rally_status.get("qqq_vs_ath_pct", 0)
+            _ath = rally_status.get("ath_qqq", 0)
+            _vs_color = "#34c759" if _vs >= 0 else "#ff3b30"
+            _right_block = f"""
+<div class="hero-right">
+  <div style="font-size:0.7rem;color:#9c27b0;font-weight:600;margin-bottom:2px">ATH 대비</div>
+  <div style="font-size:1.9rem;font-weight:900;color:{_vs_color};line-height:1.1">{_vs:+.1f}%</div>
+  <div style="font-size:0.7rem;color:#6c6c70;margin-top:2px">QQQ ATH ${_ath:.2f}</div>
+</div>"""
+
+        # ════════════════════════════════════════════════
+        # ① 히어로 카드 — 오늘의 신호
+        # ════════════════════════════════════════════════
+        _detail_txt = sig.get("today_signal", "").replace("<br>", " · ")
+        st.markdown(f"""
+<div class="hero-card {_hero_cls}">
+  <div class="hero-left">
+    <div class="hero-icon">{_hero_icon}</div>
+    <div class="hero-action">{_hero_label}</div>
+    <div class="hero-detail">{_detail_txt}</div>
+    <div style="font-size:0.72rem;color:#6c6c70;margin-top:6px">📅 {sig['today_date']}</div>
+  </div>
+  {_right_block}
+</div>
+""", unsafe_allow_html=True)
+
+        # ════════════════════════════════════════════════
+        # ② KPI 타일 — 핵심 자산 지표
+        # ════════════════════════════════════════════════
+        if _has_asset_data:
+            _pct_c  = "kpi-pos" if _profit_pct >= 0 else "kpi-neg"
+            _mdd_c  = "kpi-neg" if _mdd < -5 else "kpi-neu"
+            _cagr_c = "kpi-pos" if _cagr >= 0 else "kpi-neg"
+            _ma_dev = ((pr["qqq"] - pr["ma200"]) / pr["ma200"] * 100) if pr["ma200"] > 0 else 0
+            _ma_c   = "kpi-pos" if _ma_dev >= 0 else "kpi-neg"
+            _pft_sgn = "+" if _profit >= 0 else ""
+            st.markdown(f"""
+<div class="kpi-row">
+  <div class="kpi-tile">
+    <div class="kpi-label">오늘 자산</div>
+    <div class="kpi-value">${user_today_total:,.0f}</div>
+    <div class="kpi-delta {_pct_c}">{_pft_sgn}${_profit:,.0f}</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">총 수익률</div>
+    <div class="kpi-value {_pct_c}">{_profit_pct:+.1f}%</div>
+    <div class="kpi-delta kpi-neu">CAGR {_cagr:+.1f}%</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">현재 MDD</div>
+    <div class="kpi-value {_mdd_c}">{_mdd:.1f}%</div>
+    <div class="kpi-delta kpi-neu">최고점 대비</div>
+  </div>
+  <div class="kpi-tile">
+    <div class="kpi-label">QQQ vs MA200</div>
+    <div class="kpi-value {_ma_c}">{_ma_dev:+.1f}%</div>
+    <div class="kpi-delta kpi-neu">${pr['qqq']:,.2f}</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+        # ════════════════════════════════════════════════
+        # ③ 내 자산 차트
+        # ════════════════════════════════════════════════
+        if _has_asset_data:
+            if _df_slice is not None and "tqqq" in _df_slice.columns:
+                _tqqq_start0 = float(_df_slice["tqqq"].iloc[0])
+                _bnh = _df_slice["tqqq"] / _tqqq_start0 * _scaled_initial if _tqqq_start0 > 0 else None
+            else:
+                _bnh = None
+
+            import plotly.graph_objects as _go
+            _fig = _go.Figure()
+            _fig.add_trace(_go.Scatter(
+                x=scaled_nav.index, y=scaled_nav.values,
+                name="전략 (내 자산)", line=dict(color="#007aff", width=2.5),
+                hovertemplate="%{x|%Y-%m-%d}<br>$%{y:,.0f}<extra></extra>"
+            ))
+            if _bnh is not None:
+                _fig.add_trace(_go.Scatter(
+                    x=_bnh.index, y=_bnh.values,
+                    name="TQQQ 단순보유", line=dict(color="#c7c7cc", width=1.5, dash="dot"),
+                    hovertemplate="%{x|%Y-%m-%d}<br>$%{y:,.0f}<extra></extra>"
+                ))
+            _fig.add_trace(_go.Scatter(
+                x=[scaled_nav.index[-1]], y=[user_today_total],
+                name="오늘 실제", mode="markers",
+                marker=dict(color="#ff3b30", size=11, symbol="circle"),
+                hovertemplate="오늘 실제<br>$%{y:,.0f}<extra></extra>"
+            ))
+            _fig.update_layout(
+                height=300,
+                margin=dict(l=0, r=0, t=10, b=0),
+                hovermode="x unified",
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0,
+                            font=dict(size=11)),
+                yaxis_title=None,
+                plot_bgcolor="white",
+                paper_bgcolor="white",
+            )
+            _fig.update_xaxes(gridcolor="#f2f2f7", showgrid=True)
+            _fig.update_yaxes(gridcolor="#f2f2f7", showgrid=True)
+            _cl, _ = st.columns([1, 7])
+            with _cl:
+                _log_t = st.toggle("로그", value=False, key="today_nav_logscale")
+            if _log_t:
+                _fig.update_yaxes(type="log")
+            st.plotly_chart(_fig, use_container_width=True)
+            st.caption(
+                f"ℹ️ 빨간 점 = 오늘 실제 자산 (${user_today_total:,.0f}). "
+                f"곡선은 전략을 그대로 따랐을 때의 추정 궤적입니다."
+            )
+        else:
+            st.markdown(
+                '<div class="ios-card" style="color:#8e8e93;text-align:center;">'
+                '📊 사이드바에서 TQQQ 주수·평균단가·현금을 입력하면 자산 차트가 표시됩니다.'
+                '</div>', unsafe_allow_html=True
             )
 
-        if not sig["ok"]:
-            st.error(f"신호 계산 실패: {sig['error']}")
+        # ════════════════════════════════════════════════
+        # ④ 가격 정보 (Price Pills)
+        # ════════════════════════════════════════════════
+        st.markdown('<div class="sec-label">📡 현재 가격</div>', unsafe_allow_html=True)
+        _ma_dev2 = ((pr["qqq"] - pr["ma200"]) / pr["ma200"] * 100) if pr["ma200"] > 0 else 0
+        _ma_c2   = "ppill-up" if _ma_dev2 >= 0 else "ppill-dn"
+        _pills   = f"""
+<div class="price-pills">
+  <div class="ppill">
+    <div class="ppill-lbl">QQQ</div>
+    <div class="ppill-val">${pr['qqq']:,.2f}</div>
+    <div class="ppill-sub {_ma_c2}">MA200 {_ma_dev2:+.1f}%</div>
+  </div>
+  <div class="ppill">
+    <div class="ppill-lbl">TQQQ</div>
+    <div class="ppill-val">${pr['tqqq']:,.2f}</div>
+    <div class="ppill-sub ppill-nu">레버리지 3×</div>
+  </div>"""
+        if pr.get("gld", 0) > 0:
+            _pills += f"""
+  <div class="ppill">
+    <div class="ppill-lbl">GLD (금)</div>
+    <div class="ppill-val">${pr['gld']:,.2f}</div>
+    <div class="ppill-sub ppill-nu">헷지</div>
+  </div>"""
+        if pr.get("tlt", 0) > 0:
+            _pills += f"""
+  <div class="ppill">
+    <div class="ppill-lbl">SHY (채권)</div>
+    <div class="ppill-val">${pr['tlt']:,.2f}</div>
+    <div class="ppill-sub ppill-nu">헷지</div>
+  </div>"""
+        if pr.get("ma200", 0) > 0:
+            _pills += f"""
+  <div class="ppill">
+    <div class="ppill-lbl">QQQ MA200</div>
+    <div class="ppill-val">${pr['ma200']:,.2f}</div>
+    <div class="ppill-sub ppill-nu">200일 이평</div>
+  </div>"""
+        _pills += "</div>"
+        st.markdown(_pills, unsafe_allow_html=True)
+
+        # ════════════════════════════════════════════════
+        # ⑤ 행동 지침 카드
+        # ════════════════════════════════════════════════
+        st.markdown('<div class="sec-label">📋 오늘의 행동 지침</div>', unsafe_allow_html=True)
+        if action_type == "HOLD":
+            st.markdown(
+                '<div class="ios-card" style="border-left:4px solid #34c759;">'
+                '✅ <strong>보유 유지</strong> — 오늘은 매매 없음. 시장을 관찰하세요.'
+                '</div>', unsafe_allow_html=True
+            )
+        elif action_type == "WAITING":
+            st.markdown(
+                '<div class="ios-card" style="border-left:4px solid #ff9500;">'
+                '⏳ <strong>관망 중</strong> — 오늘은 아무것도 하지 마세요. 재진입 신호를 기다립니다.'
+                '</div>', unsafe_allow_html=True
+            )
+        elif not recs:
+            st.markdown(
+                '<div class="ios-card">ℹ️ 특별한 액션이 없습니다.</div>',
+                unsafe_allow_html=True
+            )
         else:
-            action_type = sig["action_type"]
-            action_badge = {
-                "BUY_ALL":    "🟢 **전량매수**",
-                "REENTRY":    "🟢 **재진입 (전량매수)**",
-                "SELL_ALL":   "🔴 **전량매도**",
-                "SPLIT_BUY":  "🟡 **분할매수**",
-                "RALLY_SELL": "💰 **랠리 익절 (부분매도)**",
-                "HEDGE_BUY":  "🛡️ **헷지 매수**",
-                "HEDGE_SELL": "🛡️ **헷지 매도**",
-                "WAITING":    "⏳ **관망**",
-                "HOLD":       "✅ **보유 유지**",
-            }.get(action_type, f"ℹ️ {action_type}")
+            _act_cls_map = {
+                "매수": "act-buy",  "BUY": "act-buy",   "buy": "act-buy",
+                "매도": "act-sell", "SELL": "act-sell", "sell": "act-sell",
+                "분할": "act-split", "익절": "act-rally",
+                "보유": "act-hold", "HOLD": "act-hold",
+            }
+            for rec in recs:
+                _ak   = rec.get("action", "")
+                _ac   = next((v for k, v in _act_cls_map.items() if k in _ak), "act-hold")
+                _amt  = f'${rec["amount_usd"]:,.0f}' if rec.get("amount_usd", 0) > 0 else "-"
+                _shs  = f'{rec["shares"]:,.2f}주' if rec.get("shares", 0) > 0 else ""
+                _note = rec.get("note", "")
+                st.markdown(f"""
+<div class="action-row">
+  <div class="action-asset">{rec.get('asset','')}</div>
+  <div class="action-type {_ac}">{_ak}</div>
+  <div style="flex:1;font-size:0.82rem;color:#6c6c70;padding:0 8px">{_note}</div>
+  <div class="action-right">
+    <div class="action-amt">{_amt}</div>
+    <div class="action-sh">{_shs}</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+            st.markdown(
+                '<div style="font-size:0.76rem;color:#8e8e93;margin:4px 0 8px 4px;">'
+                '⚠️ 실제 체결은 <strong>미국장 개장 후 시가(다음 거래일)</strong>에 진행됩니다. 기준가는 어제 종가.'
+                '</div>', unsafe_allow_html=True
+            )
 
-            # ════════════════════════════════════════════════
-            # ① 오늘 취해야 할 행동 (최상단)
-            # ════════════════════════════════════════════════
-            recs = calc_action_recommendation(sig, pos, p)
-            st.markdown(f"## 🎯 오늘 취해야 할 행동  ·  `{sig['today_date']}`")
-            st.markdown(f"#### {action_badge} — {sig['today_signal']}")
+        # ════════════════════════════════════════════════
+        # ⑥ D-day 상세 카드 (관망 중일 때)
+        # ════════════════════════════════════════════════
+        if waiting_info.get("is_waiting"):
+            _mode2 = waiting_info.get("mode", "")
+            _rem2  = waiting_info.get("remaining_days", 0)
+            _ela2  = waiting_info.get("elapsed_days", 0)
+            _tot2  = waiting_info.get("total_days", 0)
+            _soc2  = waiting_info.get("sell_off_count", 0)
+            _prg2  = int(_ela2 / _tot2 * 100) if _tot2 > 0 else 0
+            if _mode2 in ("short", "long"):
+                _mlbl = "단기 관망" if _mode2 == "short" else "장기 관망"
+                st.markdown(f"""
+<div class="dday-ios">
+  <div class="dday-big dday-org">D-{_rem2}</div>
+  <div class="dday-info">
+    <div class="dday-title">{_mlbl} 대기 중</div>
+    <div class="dday-sub">{_ela2}일 경과 / 총 {_tot2}일 · {_soc2}차 매도</div>
+    <div class="dday-prog">
+      <div class="dday-prog-bar" style="width:{_prg2}%"></div>
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+            elif _mode2 == "ma200":
+                _str2 = sig["signal_row"].get("state_ma5_streak", 0)
+                _ned2 = p.ma200_reentry_streak
+                _sp2  = int(_str2 / _ned2 * 100) if _ned2 > 0 else 100
+                st.markdown(f"""
+<div class="dday-ios">
+  <div class="dday-big dday-pur" style="font-size:1.8rem;text-align:center;line-height:1.2">추세<br>대기</div>
+  <div class="dday-info">
+    <div class="dday-title">MA200 관망 — 추세 확인 중</div>
+    <div class="dday-sub">MA5&gt;MA200 {_str2}/{_ned2}일 연속 · {_ela2}일 경과</div>
+    <div class="dday-prog">
+      <div class="dday-prog-bar" style="width:{_sp2}%;background:#9c27b0"></div>
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
-            if action_type in ("HOLD", "WAITING"):
-                if action_type == "WAITING":
-                    st.success("👉 **관망 중입니다. 오늘은 아무 것도 하지 마세요.** "
-                               "전략이 자동으로 재진입 타이밍을 찾을 때까지 기다립니다.")
+        # ════════════════════════════════════════════════
+        # ⑦ 랠리 익절 현황 카드
+        # ════════════════════════════════════════════════
+        if rally_status.get("ath_qqq", 0) > 0 and action_type not in ("SELL_ALL", "WAITING"):
+            _ath2   = rally_status.get("ath_qqq", 0)
+            _vs2    = rally_status.get("qqq_vs_ath_pct", 0)
+            _rlvls  = rally_status.get("levels", [])
+            _rl_h   = ""
+            for lv in _rlvls:
+                _lv_c  = "rlv-done" if lv.get("done") else (
+                         "rlv-next" if abs(lv.get("gap_pct", 99)) < 5 else "rlv-far")
+                _lv_ic = "✅" if lv.get("done") else (
+                         "🎯" if abs(lv.get("gap_pct", 99)) < 5 else "○")
+                _gp_c  = "ppill-dn" if lv.get("gap_pct", 0) > 0 else "ppill-up"
+                _rl_h += f"""
+<div class="rlv {_lv_c}">
+  <div class="rlv-n">{_lv_ic} L{lv.get('level','')}</div>
+  <div class="rlv-th">+{lv.get('thresh_pct',0):.0f}%</div>
+  <div class="rlv-gap {_gp_c}">{lv.get('gap_pct',0):+.1f}%</div>
+</div>"""
+            st.markdown(f"""
+<div class="rally-card">
+  <div class="rally-title">💰 랠리 익절 모니터 · ATH QQQ ${_ath2:.2f} · 현재 {_vs2:+.1f}%</div>
+  <div class="rally-levels">{_rl_h}</div>
+</div>
+""", unsafe_allow_html=True)
+
+        # ════════════════════════════════════════════════
+        # ⑧ 분할매수 트리거 카드
+        # ════════════════════════════════════════════════
+        if split_buy_status.get("active"):
+            _base2 = split_buy_status["base_price"]
+            _now2  = split_buy_status["qqq_now"]
+            _slvls = split_buy_status.get("levels", [])
+            _sr_h  = ""
+            for lv in _slvls:
+                _gap2 = (_now2 / lv["trigger_qqq"] - 1) * 100 if lv["trigger_qqq"] > 0 else 0
+                if lv["done"]:
+                    _st2 = '<span class="split-st" style="color:#8e8e93">✅ 완료</span>'
+                elif lv.get("triggered"):
+                    _st2 = '<span class="split-st split-fire">🔔 발동!</span>'
                 else:
-                    st.success("👉 **보유 유지. 오늘은 매매 없음.**")
-            elif not recs:
-                st.info("특별한 액션이 없습니다. 신호 내용을 참고하세요.")
-            else:
-                rec_df = pd.DataFrame(recs)
-                rec_df["수량"]       = rec_df["shares"].apply(lambda x: f"{x:,.4f} 주" if x > 0 else "-")
-                rec_df["예상 금액"]  = rec_df["amount_usd"].apply(lambda x: f"${x:,.0f}" if x > 0 else "-")
-                rec_df["기준가"]     = rec_df["price"].apply(lambda x: f"${x:,.2f}" if x > 0 else "-")
-                st.dataframe(
-                    rec_df[["asset", "action", "수량", "예상 금액", "기준가", "note"]].rename(
-                        columns={"asset": "자산", "action": "행동", "note": "비고"}
-                    ),
-                    use_container_width=True, hide_index=True
-                )
-                st.caption("⚠️ 실제 체결은 **미국장 개장 후 시가**에 진행됩니다. "
-                           "위 '기준가'는 어제 종가 기준이므로 실제 체결가는 다를 수 있습니다.")
+                    _st2 = '<span class="split-st split-wait">○ 대기</span>'
+                _done2 = "split-done" if lv["done"] else ""
+                _sr_h += f"""
+<div class="split-row {_done2}">
+  <span class="split-zone">{lv.get('zone','')}{lv.get('level','')}</span>
+  <span class="split-price">${lv['trigger_qqq']:.2f} (-{lv.get('drop_pct',0):.0f}%)</span>
+  <span class="split-gap">{_gap2:+.1f}%</span>
+  <span class="split-pct">{lv.get('buy_pct',0):.0f}%</span>
+  {_st2}
+</div>"""
+            st.markdown(f"""
+<div class="split-card">
+  <div class="split-header">
+    <div class="split-title">📊 분할매수 트리거 현황</div>
+    <div class="split-base">기준 QQQ ${_base2:.2f} · 현재 ${_now2:.2f} ({_now2/_base2*100:.1f}%)</div>
+  </div>
+  {_sr_h}
+</div>
+""", unsafe_allow_html=True)
 
-            # ════════════════════════════════════════════════
-            # ② 내 자산 추이 (오늘 실제 잔액 기준 역산)
-            # ════════════════════════════════════════════════
-            st.markdown("### 📈 내 자산 추이 (오늘 실제 잔액 기준 역산)")
+        # ════════════════════════════════════════════════
+        # ⑨ 펼쳐보기 섹션 (3열)
+        # ════════════════════════════════════════════════
+        _exp_c1, _exp_c2, _exp_c3 = st.columns(3)
 
-            _nav_series = sig.get("nav_series")
-            _df_slice   = sig.get("df_slice")
-
-            if _nav_series is not None and len(_nav_series) >= 2:
-                # 오늘 실제 총자산 계산
-                user_today_total = compute_user_current_total(pos, sig["prices"])
-
-                # 스케일 팩터: 실제 오늘 자산 / 백테스트 마지막 NAV
-                _sim_last = float(_nav_series.iloc[-1])
-
-                if user_today_total > 0 and _sim_last > 0:
-                    scale = user_today_total / _sim_last
-                    scaled_nav = _nav_series * scale
-                    _scaled_initial = float(scaled_nav.iloc[0])
-                    _profit = user_today_total - _scaled_initial
-                    _profit_pct = (_profit / _scaled_initial * 100) if _scaled_initial > 0 else 0.0
-
-                    # TQQQ Buy & Hold 비교 (같은 초기값으로 시작했을 때)
-                    if _df_slice is not None and "tqqq" in _df_slice.columns:
-                        _tqqq_start = float(_df_slice["tqqq"].iloc[0])
-                        _bnh = _df_slice["tqqq"] / _tqqq_start * _scaled_initial
-                    else:
-                        _bnh = None
-
-                    import plotly.graph_objects as _go
-                    fig = _go.Figure()
-                    fig.add_trace(_go.Scatter(
-                        x=scaled_nav.index, y=scaled_nav.values,
-                        name="전략 (내 자산)", line=dict(color="#2E86DE", width=2.5),
-                        hovertemplate="%{x|%Y-%m-%d}<br>$%{y:,.0f}<extra></extra>"
-                    ))
-                    if _bnh is not None:
-                        fig.add_trace(_go.Scatter(
-                            x=_bnh.index, y=_bnh.values,
-                            name="TQQQ Buy & Hold", line=dict(color="#A0A0A0", width=1.5, dash="dot"),
-                            hovertemplate="%{x|%Y-%m-%d}<br>$%{y:,.0f}<extra></extra>"
-                        ))
-                    # 오늘 실제 총자산 점 강조
-                    fig.add_trace(_go.Scatter(
-                        x=[scaled_nav.index[-1]], y=[user_today_total],
-                        name="오늘 실제", mode="markers",
-                        marker=dict(color="#EB5757", size=11, symbol="circle"),
-                        hovertemplate="오늘 실제 자산<br>$%{y:,.0f}<extra></extra>"
-                    ))
-                    fig.update_layout(
-                        height=380,
-                        margin=dict(l=10, r=10, t=30, b=10),
-                        hovermode="x unified",
-                        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
-                        yaxis_title="USD",
-                    )
-                    _log_t = st.toggle("로그 스케일", value=False, key="today_nav_logscale")
-                    if _log_t:
-                        fig.update_yaxes(type="log")
-                    st.plotly_chart(fig, use_container_width=True)
-
-                    # 요약 지표
-                    _nav_max = float(scaled_nav.cummax().iloc[-1])
-                    _mdd = (user_today_total / _nav_max - 1) * 100 if _nav_max > 0 else 0.0
-                    _days = (scaled_nav.index[-1] - scaled_nav.index[0]).days
-                    _years = _days / 365.25 if _days > 0 else 0.01
-                    _cagr = ((user_today_total / _scaled_initial) ** (1/_years) - 1) * 100 if _scaled_initial > 0 and _years > 0 else 0.0
-
-                    mc1, mc2, mc3, mc4 = st.columns(4)
-                    mc1.metric("역산 시작 자산", f"${_scaled_initial:,.0f}",
-                               help=f"오늘 실제 자산에서 역산한 {pos['trade_start_date']} 시점의 자산")
-                    mc2.metric("오늘 자산", f"${user_today_total:,.0f}",
-                               delta=f"${_profit:+,.0f}")
-                    mc3.metric("총 수익률", f"{_profit_pct:+.1f}%")
-                    mc4.metric("연평균 수익률(CAGR)", f"{_cagr:+.1f}%")
-
-                    st.caption(f"ℹ️ 차트의 마지막 점(빨간 원)은 오늘 입력하신 실제 보유 자산입니다. "
-                               f"과거 곡선은 **전략을 그대로 따랐다고 가정**했을 때의 추정 궤적이며, "
-                               f"스케일은 오늘 실제 금액(${user_today_total:,.0f})에 맞춰 역산되었습니다. "
-                               f"실제 수익률이 위 CAGR과 다르다면 전략과 다른 매매를 하셨을 가능성이 큽니다.")
-                else:
-                    st.info("오늘 실제 총자산이 0입니다. TQQQ 주수·평균단가·현금을 입력해 주세요.")
-            else:
-                st.info("그래프를 그릴 데이터가 부족합니다.")
-
-            # ════════════════════════════════════════════════
-            # ③ 참고 정보 (오늘 가격, 비교, 다음 트리거)
-            # ════════════════════════════════════════════════
-            st.markdown("### 💹 오늘 가격")
-            pr = sig["prices"]
-            cols = st.columns(4)
-            cols[0].metric("QQQ", f"${pr['qqq']:,.2f}",
-                           delta=f"MA200 ${pr['ma200']:,.2f}")
-            cols[1].metric("TQQQ", f"${pr['tqqq']:,.2f}")
-            if pr.get("gld"):
-                cols[2].metric("GLD", f"${pr['gld']:,.2f}")
-            if pr.get("tlt"):
-                cols[3].metric("SHY", f"${pr['tlt']:,.2f}")
-
-            # ── 전략 기준 포지션 vs 사용자 포지션 비교 ──
-            with st.expander("📊 전략 기준 포지션 vs 내 실제 포지션 비교"):
+        with _exp_c1:
+            with st.expander("📊 전략 vs 내 실제 포지션"):
                 exp = sig["expected"]
                 _mytqqq = float(pos.get("tqqq_shares", 0))
                 _mycash = float(pos.get("cash_usd", 0))
@@ -1022,35 +1560,48 @@ with tab_today:
                     ["현금 (USD)", f"${exp['cash_usd']:,.0f}",    f"${_mycash:,.0f}"],
                     ["GLD 주수",   f"{exp['gld_shares']:,.2f}",   f"{_mygld:,.2f}"],
                     ["SHY 주수",   f"{exp['tlt_shares']:,.2f}",   f"{_mytlt:,.2f}"],
-                ], columns=["항목", "전략이 기대하는 보유", "내 실제 보유"])
+                ], columns=["항목", "전략 기대", "내 실제"])
                 st.dataframe(comp_df, use_container_width=True, hide_index=True)
-                st.caption("차이가 크다면 그동안 일부 신호를 놓쳤거나 전략과 다른 거래를 한 것입니다. "
-                           "앞으로 이 앱의 신호를 따라가면 점차 일치하게 됩니다.")
+                st.caption("차이가 크면 일부 신호를 놓쳤거나 전략과 다른 거래를 한 것입니다.")
 
-            # ── 다음 트리거 예상가 ──
-            if sig["next_triggers"]:
-                with st.expander("🔮 다음 주요 이벤트 예상가"):
+        with _exp_c2:
+            if sig.get("next_triggers"):
+                with st.expander("🔮 다음 이벤트 예상가"):
                     for t in sig["next_triggers"]:
                         st.markdown(f"- {t}")
 
-            # ── 최근 거래 ──
+        with _exp_c3:
             if len(sig["last_trades"]) > 0:
-                with st.expander("📋 최근 5건 거래 (거래 시작일 이후 전략 기준)"):
+                with st.expander("📋 최근 5건 거래"):
                     _lt = sig["last_trades"].copy()
                     _lt["date"] = pd.to_datetime(_lt["date"]).dt.strftime("%Y-%m-%d")
-                    st.dataframe(_lt[["date", "action", "tqqq_price", "qqq_price", "reason"]],
-                                 use_container_width=True, hide_index=True)
+                    _show_cols = [c for c in ["date", "action", "tqqq_price", "qqq_price", "reason"]
+                                  if c in _lt.columns]
+                    st.dataframe(_lt[_show_cols], use_container_width=True, hide_index=True)
 
-            st.divider()
-            st.caption(f"📅 데이터 최종 업데이트: {sig['today_date']} | "
-                       f"전략 시뮬레이션 NAV: ${sig['nav']:,.0f} | "
-                       f"데이터는 Yahoo Finance 기준이며 접속 시마다 최신 데이터로 갱신됩니다.")
+        st.caption(
+            f"📅 데이터 기준일: **{sig['today_date']}**  ·  전략 NAV: ${sig['nav']:,.0f}  ·  "
+            f"Yahoo Finance 데이터, 접속 시마다 자동 갱신"
+        )
+
+# ── 분석 탭 구분선 + 탭 정의 (신호 섹션 아래에 위치) ─────
+st.markdown("""
+<div class="analysis-sep">
+  <div class="sep-line"></div>
+  <div class="sep-text">📊 백테스트 &amp; 분석 도구</div>
+  <div class="sep-line"></div>
+</div>
+""", unsafe_allow_html=True)
+
+tab_main, tab_bear, tab_signals, tab_compare, tab_manual = st.tabs(
+    ["📊 백테스트 결과", "🔴 하락장 분석", "📋 일별 시그널", "💾 저장·비교", "📖 전략 매뉴얼"]
+)
 
 # ════════════════════════════════════════════════════════
-# TAB 1: 결과
+# TAB 0: 백테스트 결과
 # ════════════════════════════════════════════════════════
 with tab_main:
-    st.subheader("📊 성과 요약")
+    st.subheader("📊 백테스트 성과 요약")
 
     _total_tax = result.get("total_tax_paid", 0)
     if use_tax and _total_tax > 0:
@@ -1859,42 +2410,4 @@ with tab_manual:
                                   재진입 ✓         cnt 증가
                                         │              │
                                         ▼         cnt>=4 되면
-                                  [공격모드] ◀──── split_buy_base=q
-                                    │    ▲              │
-                              -3%(B)│    │         [S2: tqqq=0, cnt>=4]
-                              MA200 │    │              │
-                                    │    │         분할매수 체결
-                                    │    │              │
-                                    │    │         [S4: tqqq>0, cnt>=4]
-                                    │    │              │
-                                    │    │    42일 경과 → 재진입 ✓
-                                    │    │    (분할매수분 유지 + 잔여현금 추가매수)
-                                    │    │              │
-                                    │    └──────────────┘
-                                    │
-                              랠리 익절 후
-                              MA200 터치
-                                    │
-                                    ▼
-                              [M1: ma200, tqqq=0]
-                                    │              │
-                              MA5>MA200       분할매수 체결
-                              5일 연속              │
-                              재진입 ✓         [M2: tqqq>0]
-                                    │              │
-                                    ▼         -3%(C) → 전량매도 → [S1/S2]
-                              [공격모드]        또는
-                                          MA5>MA200 5일 → 재진입 ✓
-                                          (분할매수분 유지 + 잔여현금 추가매수)
-
-  ※ 재진입 = 헷지 전량매도 + (기존 분할매수 유지) + 남은 현금 전액 TQQQ 매수
-             sell_off_count=0, waiting=False, trigger_type="" 초기화
-""", language=None)
-
-        st.markdown("---")
-        st.markdown("### 📄 전략 명세 전문 (strategy.md)")
-        if _strategy_text:
-            st.markdown(_strategy_text)
-        else:
-            st.warning("strategy.md 파일을 찾을 수 없습니다.")
-
+                                  [공격모�
